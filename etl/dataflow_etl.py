@@ -27,6 +27,8 @@ def dataflow_pipeline_run():
         )
 
         picks_dedup | 'WritePickups' >> beam.io.WriteToText('gs://dott_test/pickups_final.csv')
+        depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://dott_test/deployments_final.csv')
+        rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://dott_test/rides_final.csv')
 
         # table_schema = {
         #     'fields': [
