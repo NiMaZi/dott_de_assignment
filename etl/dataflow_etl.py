@@ -1,9 +1,24 @@
 import logging
 import apache_beam as beam
-from apache_beam.options.pipeline_options import PipelineOptions
+from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
 
-def dataflow_pipeline_run():
-    with beam.Pipeline(options = PipelineOptions()) as p:
+def get_pipeline_options():
+      options = PipelineOptions()
+      options.view_as(StandardOptions).runner = 'DirectRunner'
+
+    #   gcp_options                                   = options.view_as( GoogleCloudOptions )
+    #   gcp_options.job_name                          = "sampleflow"
+    #   gcp_options.project                           = "etldemo-000000"
+    #   gcp_options.staging_location                  = "gs://<bucket name>/stage"
+    #   gcp_options.temp_location                     = "gs://<bucket name>/tmp"
+    #   gcp_options.service_account_email             = "etldemo@etldemo-000000.iam.gserviceaccount.com"
+    #   options.view_as( StandardOptions ).runner     = 'DataflowRunner'
+
+      return options
+
+def dataflow_pipeline_run(options):
+
+    with beam.Pipeline(options = options) as p:
         picks = p | 'ReadPickups' >> beam.io.ReadFromText('gs://dott_test/pickups*.csv')
         depls = p | 'ReadDeployments' >> beam.io.ReadFromText('gs://dott_test/deployments*.csv')
         rides = p | 'ReadRides' >> beam.io.ReadFromText('gs://dott_test/rides*.csv')
@@ -24,5 +39,5 @@ def dataflow_pipeline_run():
         depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://dott_test/deployments_final.csv', num_shards = 1, shard_name_template = "")
         rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://dott_test/rides_final.csv', num_shards = 1, shard_name_template = "")
 
-if __name__ == '__main__':
-    dataflow_pipeline_run()
+# if __name__ == '__main__':
+#     dataflow_pipeline_run()
