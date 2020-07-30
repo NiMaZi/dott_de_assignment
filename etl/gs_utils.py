@@ -9,7 +9,7 @@ def check_new_file(bucket_name, prefix):
 
     curr_ts = datetime.datetime.now()
     
-    f = open(check_log_path, 'rw')
+    f = open(check_log_path, 'a')
     last_log = f.read()
 
     if not last_log:
