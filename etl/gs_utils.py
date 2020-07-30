@@ -7,7 +7,7 @@ def check_new_file(bucket_name, prefix):
     client = storage.Client()
     bucket = client.bucket(bucket_name)
 
-    curr_ts = datetime.datetime.now()
+    curr_ts = datetime.datetime.utcnow()
     
     f = open(check_log_path, 'r+')
     last_log = f.read()
@@ -29,7 +29,7 @@ def check_new_file(bucket_name, prefix):
 
 def check_log():
 
-    curr_ts = datetime.datetime.now()
+    curr_ts = datetime.datetime.utcnow()
 
     f = open(check_log_path, 'w')
     f.write(curr_ts.strftime("%Y-%m-%d-%H-%M-%S"))
