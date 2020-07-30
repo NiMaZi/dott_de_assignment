@@ -1,7 +1,7 @@
 import datetime
 from google.cloud import storage
 
-check_log_path = "~/check_log.txt"
+check_log_path = "check_log.txt"
 
 def check_new_file(bucket_name, prefix):
     client = storage.Client()
