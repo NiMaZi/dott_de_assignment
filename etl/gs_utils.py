@@ -10,7 +10,7 @@ def check_new_file(bucket_name, prefix):
     blobs = list(bucket.list_blobs(prefix = prefix + 'scheduler_log'))
 
     if not len(blobs):
-        blob = bucket_name.blob(prefix + 'scheduler_log')
+        blob = bucket.blob(prefix + 'scheduler_log')
         blob.upload_from_string(curr_ts.strftime("%Y-%m-%d-%H-%M-%S"))
 
     for blob in client.list_blobs(bucket_name, prefix = prefix):
