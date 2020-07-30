@@ -45,12 +45,38 @@ def bq_keymap(client):
         on (dep.vehicle_id = keymap.vehicle_id)
         order by vehicle_id, time_task_resolved desc
     """
-    
-    job = bq_client.query(query, job_config = job_config)
+
+    job = client.query(query, job_config = job_config)
     _ = job.result()
 
 def bq_cycle_index(client):
-    pass
+
+    table = 'last_dep_pick_cycle_indexed_rides'
+
+    job_config = bigquery.QueryJobConfig(
+        destination = "{}.{}.{}".format(project, dataset, table),
+        writeDisposition = "WRITE_TRUNCATE"
+    )
+
+    query = """
+        select
+            dep.task_id,
+            dep.vehicle_id,
+            keymap.qr_code,
+            dep.time_task_created,
+            dep.time_task_resolved 
+        from `dott_test.deployment` as dep left join
+        (select
+            vehicle_id,
+            qr_code
+        from `dott_test.pickups` 
+        group by vehicle_id, qr_code) as keymap
+        on (dep.vehicle_id = keymap.vehicle_id)
+        order by vehicle_id, time_task_resolved desc
+    """
+
+    # job = client.query(query, job_config = job_config)
+    # _ = job.result()
 
 def bigquery_preprocess():
 
