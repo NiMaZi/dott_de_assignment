@@ -26,9 +26,9 @@ def dataflow_pipeline_run():
             | 'PrintCount2' >> beam.Map(logging.error)
         )
 
-        picks_dedup | 'WritePickups' >> beam.io.WriteToText('gs://dott_test/pickups_final.csv')
-        depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://dott_test/deployments_final.csv')
-        rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://dott_test/rides_final.csv')
+        picks_dedup | 'WritePickups' >> beam.io.WriteToText('gs://dott_test/pickups_final.csv', num_shards = 1, shard_name_template = "")
+        depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://dott_test/deployments_final.csv', num_shards = 1, shard_name_template = "")
+        rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://dott_test/rides_final.csv', num_shards = 1, shard_name_template = "")
 
         # table_schema = {
         #     'fields': [
