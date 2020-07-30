@@ -6,8 +6,9 @@ BUCKET_NAME = "dott_de_assignment"
 RAW_DATA_PREFIX = "raw_data_landing/"
 
 def etl_core():
-    dataflow_pipeline_options = get_pipeline_options()
-    dataflow_pipeline_run(dataflow_pipeline_options)
+    # dataflow_pipeline_options = get_pipeline_options()
+    # dataflow_pipeline_run(dataflow_pipeline_options)
+    start_bigquery_transfer()
 
 def main():
     new_file = check_new_file(BUCKET_NAME, RAW_DATA_PREFIX)
