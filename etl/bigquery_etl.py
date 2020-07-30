@@ -44,7 +44,8 @@ def bq_keymap(client):
         group by vehicle_id, qr_code) as keymap
         on (dep.vehicle_id = keymap.vehicle_id)
         order by vehicle_id, time_task_resolved desc
-    """=
+    """
+    
     job = bq_client.query(query, job_config = job_config)
     _ = job.result()
 
