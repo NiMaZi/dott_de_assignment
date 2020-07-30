@@ -26,21 +26,23 @@ def dataflow_pipeline_run():
             | 'PrintCount2' >> beam.Map(logging.error)
         )
 
-        table_schema = {
-            'fields': [
-                {'name': 'task_id', 'type': 'STRING', 'mode': 'NULLABLE'}, 
-                {'name': 'vehicle_id', 'type': 'STRING', 'mode': 'NULLABLE'},
-                {'name': 'qr_code', 'type': 'STRING', 'mode': 'NULLABLE'},
-                {'name': 'time_task_created', 'type': 'TIMESTAMP', 'mode': 'NULLABLE'},
-                {'name': 'time_task_resolved', 'type': 'TIMESTAMP', 'mode': 'NULLABLE'},
-            ]
-        }
+        picks_dedup | 'WritePickups' >> beam.io.WriteToText('gs://dott_test/pickups_final.csv')
 
-        picks_dedup | beam.io.gcp.bigquery.WriteToBigQuery(
-            'peaceful-tide-284813:dott_test.pickups',
-            schema = table_schema
-        )
+        # table_schema = {
+        #     'fields': [
+        #         {'name': 'task_id', 'type': 'STRING', 'mode': 'NULLABLE'}, 
+        #         {'name': 'vehicle_id', 'type': 'STRING', 'mode': 'NULLABLE'},
+        #         {'name': 'qr_code', 'type': 'STRING', 'mode': 'NULLABLE'},
+        #         {'name': 'time_task_created', 'type': 'TIMESTAMP', 'mode': 'NULLABLE'},
+        #         {'name': 'time_task_resolved', 'type': 'TIMESTAMP', 'mode': 'NULLABLE'},
+        #     ]
+        # }
+
+        # picks_dedup | beam.io.gcp.bigquery.WriteToBigQuery(
+        #     'peaceful-tide-284813:dott_test.pickups',
+        #     schema = table_schema
+        # )
 
 
 if __name__ == '__main__':
-    run()
+    dataflow_pipeline_run()
