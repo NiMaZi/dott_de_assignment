@@ -5,7 +5,7 @@ from bigquery_handling import *
 app = Flask(__name__)
 
 
-@app.route('/vehicles/<key>' method = ['GET'])
+@app.route('/vehicles/<key>' methods = ['GET'])
 def func(key):
     
     bq_client = bigquery.Client(project = 'peaceful-tide-284813')
