@@ -24,10 +24,8 @@ def bq_keymap(client):
     
     table = 'keymapped_deployments'
 
-    job_config = bigquery.QueryJobConfig(
-        destination = "{}.{}.{}".format(project, dataset, table),
-        writeDisposition = "WRITE_TRUNCATE"
-    )
+    job_config = bigquery.QueryJobConfig(destination = "{}.{}.{}".format(project, dataset, table))
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
 
     query = """
         select
@@ -53,10 +51,8 @@ def bq_cycle_index(client):
 
     table = 'last_dep_pick_cycle_indexed_rides'
 
-    job_config = bigquery.QueryJobConfig(
-        destination = "{}.{}.{}".format(project, dataset, table),
-        writeDisposition = "WRITE_TRUNCATE"
-    )
+    job_config = bigquery.QueryJobConfig(destination = "{}.{}.{}".format(project, dataset, table))
+    job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
 
     query = """
         select
