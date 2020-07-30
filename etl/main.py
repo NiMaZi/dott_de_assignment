@@ -9,7 +9,7 @@ def etl_core():
     pass
 
 def main():
-    check_new_file(BUCKET_NAME, RAW_DATA_PREFIX)
+    print(check_new_file(BUCKET_NAME, RAW_DATA_PREFIX))
 
 if __name__ == '__main__':
     main()
