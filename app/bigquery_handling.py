@@ -61,7 +61,7 @@ def get_results(key, bq_client):
         results += get_n_deployments(5 - len(results), key, bq_client, qmode)
     
     if len(results) > 0:
-        str_results = "\n".join(results)
+        str_results = "<br>".join(results)
     else:
         str_results = "This query didn't hit any record."
 
