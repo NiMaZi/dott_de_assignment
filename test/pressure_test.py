@@ -23,7 +23,7 @@ def run(num_requests = 5000):
     e = time()
     valid_res = [r for r in res if r]
 
-    print("Got {} valid responses in {} seconds.")
+    print("Got {} valid responses in {} seconds.".format(len(valid_res), e - s))
 
 if __name__ == '__main__':
     if len(sys.argv) > 1:
