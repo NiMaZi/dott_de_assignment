@@ -8,15 +8,16 @@ RAW_DATA_PREFIX = ""
 def etl_core(bucket_name):
     dataflow_pipeline_options = get_pipeline_options()
     dataflow_pipeline_run(bucket_name, dataflow_pipeline_options)
-    count_duplicates(bucket_name)
+    dataflow_report = count_duplicates(bucket_name)
     bigquery_preprocess()
+    return dataflow_report
 
 def main():
 
     new_file = check_new_file(BUCKET_NAME, RAW_DATA_PREFIX)
 
     if new_file:
-        etl_core(BUCKET_NAME)
+        dataflow_report = etl_core(BUCKET_NAME)
         check_log()
     else:
         pass

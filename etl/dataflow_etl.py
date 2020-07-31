@@ -53,18 +53,18 @@ def count_duplicates(bucket_name):
     bucket = client.bucket(bucket_name)
 
     total_num_record_before_dedup = (
-        list(bucket.list_blobs(prefix = 'etl_logs/pickups_before_dedup'))[0].download_as_string() +\
-        list(bucket.list_blobs(prefix = 'etl_logs/deployments_before_dedup'))[0].download_as_string() +\
-        list(bucket.list_blobs(prefix = 'etl_logs/rides_before_dedup'))[0].download_as_string()
+        eval(list(bucket.list_blobs(prefix = 'etl_logs/pickups_before_dedup'))[0].download_as_string())[0] +\
+        eval(list(bucket.list_blobs(prefix = 'etl_logs/deployments_before_dedup'))[0].download_as_string())[0] +\
+        eval(list(bucket.list_blobs(prefix = 'etl_logs/rides_before_dedup'))[0].download_as_string())[0]
     )
 
     total_num_record_after_dedup = (
-        list(bucket.list_blobs(prefix = 'etl_logs/pickups_after_dedup'))[0].download_as_string() +\
-        list(bucket.list_blobs(prefix = 'etl_logs/deployments_after_dedup'))[0].download_as_string() +\
-        list(bucket.list_blobs(prefix = 'etl_logs/rides_after_dedup'))[0].download_as_string()
+        eval(list(bucket.list_blobs(prefix = 'etl_logs/pickups_after_dedup'))[0].download_as_string())[0] +\
+        eval(list(bucket.list_blobs(prefix = 'etl_logs/deployments_after_dedup'))[0].download_as_string())[0] +\
+        eval(list(bucket.list_blobs(prefix = 'etl_logs/rides_after_dedup'))[0].download_as_string())[0]
     )
 
-    print(total_num_record_before_dedup, total_num_record_after_dedup)
+    return "{} records loaded, {} duplicated records discarded.".format(total_num_record_after_dedup, total_num_record_before_dedup)
 
 if __name__ == '__main__':
     dataflow_pipeline_run('dott_test', get_pipeline_options())
