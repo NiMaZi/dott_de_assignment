@@ -38,7 +38,7 @@ def get_n_deployments(n, key, bq_client, qmode='vehicle_id'):
         from `{}.{}` 
         where {} = "{}"
         limit {}
-    """.format(DATASET, TABLE_MAPPED_DEPS, qmode, vehicle_id, n)
+    """.format(DATASET, TABLE_MAPPED_DEPS, qmode, key, n)
     job = bq_client.query(query)
     return ["Task ID: {}, Vehicle ID: {}, QR Code: {}, Task timeline: {} -> {}".format(
         row['task_id'],
