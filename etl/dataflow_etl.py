@@ -8,16 +8,18 @@ from apache_beam.options.pipeline_options import PipelineOptions, StandardOption
 def get_pipeline_options():
     options = PipelineOptions()
 
-    if RUNNER_OPTION == 0:
+    if RUNNER_OPTION == "0":
         options.view_as(StandardOptions).runner = 'DirectRunner'
-    else:
+    elif RUNNER_OPTION == "1":
         gcp_options = options.view_as(GoogleCloudOptions)
-        gcp_options.job_name = "dott_de_assignment"
+        gcp_options.job_name = "dott-de-assignment"
         gcp_options.project = "peaceful-tide-284813"
         gcp_options.region = "europe-west1"
         gcp_options.temp_location = "gs://dott_test/dataflow_temps"
         gcp_options.service_account_email = "dott-test-local@peaceful-tide-284813.iam.gserviceaccount.com"
         options.view_as(StandardOptions).runner = 'DataflowRunner'
+    else:
+        raise Exception("invalid arg")
 
     return options
 
