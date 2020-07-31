@@ -1,20 +1,25 @@
+import sys
+RUNNER_OPTION = sys.argv[1]
+
 import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
 
 def get_pipeline_options():
-      options = PipelineOptions()
-      options.view_as(StandardOptions).runner = 'DirectRunner'
+    options = PipelineOptions()
 
-    #   gcp_options                                   = options.view_as( GoogleCloudOptions )
-    #   gcp_options.job_name                          = "sampleflow"
-    #   gcp_options.project                           = "etldemo-000000"
-    #   gcp_options.staging_location                  = "gs://<bucket name>/stage"
-    #   gcp_options.temp_location                     = "gs://<bucket name>/tmp"
-    #   gcp_options.service_account_email             = "etldemo@etldemo-000000.iam.gserviceaccount.com"
-    #   options.view_as( StandardOptions ).runner     = 'DataflowRunner'
+    if RUNNER_OPTION == 0:
+        options.view_as(StandardOptions).runner = 'DirectRunner'
+    else:
+        gcp_options = options.view_as(GoogleCloudOptions)
+        gcp_options.job_name = "dott_de_assignment"
+        gcp_options.project = "peaceful-tide-284813"
+        gcp_options.region = "europe-west1"
+        gcp_options.temp_location = "gs://dott_test/dataflow_temps"
+        gcp_options.service_account_email = "dott-test-local@peaceful-tide-284813.iam.gserviceaccount.com"
+        options.view_as(StandardOptions).runner = 'DataflowRunner'
 
-      return options
+    return options
 
 def dataflow_pipeline_run(options):
 
