@@ -13,13 +13,13 @@ class TestQuery(unittest.TestCase):
         pass
 
     def test_qrcode_case(self):
-        self.assertEqual(get_results('C0SFT7', self.bq_client), 'FOO')
+        self.assertTrue(get_results('C0SFT7', self.bq_client).startswith("Gross amount: 3.16, Ride distance: 2198.9"))
     
     def test_vid_case(self):
-        self.assertEqual(get_results('00TW9JELAItFazRxej7f', self.bq_client), 'FOO')
+        self.assertTrue(get_results('00TW9JELAItFazRxej7f', self.bq_client).startswith("Gross amount: 3.16, Ride distance: 2198.9"))
 
     def test_bad_case(self):
-        self.assertEqual(get_results('blahblah', self.bq_client), 'FOO')
+        self.assertEqual(get_results('blahblah', self.bq_client), "This query didn't hit any record.")
 
     def test_wrong_case(self):
         with self.assertRaises(TypeError):

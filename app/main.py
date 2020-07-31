@@ -2,12 +2,14 @@ from flask import Flask, request
 from google.cloud import bigquery
 from bigquery_handling import *
 
+PROJECT = 'peaceful-tide-284813'
+
 app = Flask(__name__)
 
 @app.route('/vehicles/<key>', methods=['GET'])
 def func(key):
     
-    bq_client = bigquery.Client(project = 'peaceful-tide-284813')
+    bq_client = bigquery.Client(project = PROJECT)
     return get_results(key, bq_client)
     
 
