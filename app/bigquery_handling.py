@@ -18,13 +18,21 @@ def get_rides(key, bq_client, qmode='vehicle_id'):
         limit 5
     """.format(DATASET, TABLE_INDEXED_RIDES, qmode, key)
     job = bq_client.query(query)
-    return [row for row in job]
+    return ["Gross amount: {}, Ride distance: {}, Start: ({}, {}), End: ({}, {}).".format(
+        row['gross_amount'],
+        row['ride_distance'],
+        row['start_lng'],
+        row['start_lat'],
+        row['end_lng'],
+        row['end_lng']
+    ) for row in job]
 
 def get_n_deployments(n, key, bq_client, qmode='vehicle_id'):
     query = """
         select
             task_id,
             vehicle_id,
+            qr_code,
             time_task_created,
             time_task_resolved
         from `{}.{}` 
@@ -32,7 +40,13 @@ def get_n_deployments(n, key, bq_client, qmode='vehicle_id'):
         limit {}
     """.format(DATASET, TABLE_MAPPED_DEPS, qmode, vehicle_id, n)
     job = bq_client.query(query)
-    return [row for row in job]
+    return ["Task ID: {}, Vehicle ID: {}, QR Code: {}, Task timeline: {} -> {}".format(
+        row['task_id'],
+        row['vehicle_id'],
+        row['qr_code'],
+        row['time_task_created'],
+        row['time_task_resolved']
+    ) for row in job]
 
 def get_results(key, bq_client):
 
@@ -46,4 +60,9 @@ def get_results(key, bq_client):
     if len(results) < 5:
         results += get_n_deployments(5 - len(results), key, bq_client, qmode)
     
-    return results
+    if len(results) > 0:
+        str_results = "\n".join(results)
+    else:
+        str_results = "This query didn't hit any record."
+
+    return str_results

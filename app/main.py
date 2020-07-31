@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, request
+from flask import Flask, request
 from google.cloud import bigquery
 from bigquery_handling import *
 
@@ -8,8 +8,7 @@ app = Flask(__name__)
 def func(key):
     
     bq_client = bigquery.Client(project = 'peaceful-tide-284813')
-    results = get_results(key, bq_client)
-    return jsonify(results)
+    return get_results(key, bq_client)
     
 
 if __name__ == '__main__':

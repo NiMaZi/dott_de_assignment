@@ -12,10 +12,14 @@ def etl_core():
     bigquery_preprocess()
 
 def main():
+
     new_file = check_new_file(BUCKET_NAME, RAW_DATA_PREFIX)
 
     if new_file:
         etl_core()
+        check_log()
+    else:
+        pass
 
 
 if __name__ == '__main__':

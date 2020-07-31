@@ -29,9 +29,10 @@ def check_new_file(bucket_name, prefix):
 
 
 def check_log():
+    pass
 
-    curr_ts = datetime.datetime.utcnow()
+    # curr_ts = datetime.datetime.utcnow()
 
-    f = open(check_log_path, 'w')
-    f.write(curr_ts.strftime("%Y-%m-%d-%H-%M-%S"))
-    f.close()
+    # f = open(check_log_path, 'w')
+    # f.write(curr_ts.strftime("%Y-%m-%d-%H-%M-%S"))
+    # f.close()
