@@ -1,5 +1,5 @@
 import unittest
-from main import etl_core
+from .main import etl_core
 
 class TestQuery(unittest.TestCase):
 
