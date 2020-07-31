@@ -49,7 +49,7 @@ def dataflow_pipeline_run(BUCKET_NAME, options):
         rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://{}/rides_final.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
 def count_duplicates(bucket_name):
-    passclient = storage.Client()
+    client = storage.Client()
     bucket = client.bucket(bucket_name)
 
     total_num_record_before_dedup = (
