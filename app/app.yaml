@@ -1,4 +1,4 @@
 runtime: python37
-instance_class: F4
+instance_class: F2
 automatic_scaling:
-  max_concurrent_requests: 40
+  max_concurrent_requests: 10
