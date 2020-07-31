@@ -8,7 +8,7 @@ def get_rides(key, bq_client, qmode='vehicle_id'):
     query = """
         select
             gross_amount,
-            rides_distance,
+            ride_distance,
             start_lat,
             start_lng,
             end_lat,
