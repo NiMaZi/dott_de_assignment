@@ -1,5 +1,6 @@
-import sys
-RUNNER_OPTION = sys.argv[1]
+# import sys
+# RUNNER_OPTION = sys.argv[1]
+RUNNER_OPTION = 0
 
 import logging
 import apache_beam as beam
