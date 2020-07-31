@@ -39,5 +39,5 @@ def dataflow_pipeline_run(options):
         depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://dott_test/deployments_final.csv', num_shards = 1, shard_name_template = "")
         rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://dott_test/rides_final.csv', num_shards = 1, shard_name_template = "")
 
-# if __name__ == '__main__':
-#     dataflow_pipeline_run()
+if __name__ == '__main__':
+    dataflow_pipeline_run(get_pipeline_options())
