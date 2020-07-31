@@ -13,15 +13,7 @@ def etl_core(bucket_name):
     return dataflow_report
 
 def main():
-
-    new_file = check_new_file(BUCKET_NAME, RAW_DATA_PREFIX)
-
-    if new_file:
-        dataflow_report = etl_core(BUCKET_NAME)
-        check_log()
-    else:
-        pass
-
+    dataflow_report = etl_core(BUCKET_NAME)
 
 if __name__ == '__main__':
     main()

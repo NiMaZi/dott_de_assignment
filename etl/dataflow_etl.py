@@ -2,7 +2,6 @@
 # RUNNER_OPTION = sys.argv[1]
 RUNNER_OPTION = "0"
 
-import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
 from google.cloud import storage
