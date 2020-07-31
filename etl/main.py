@@ -1,5 +1,9 @@
-from .bigquery_etl import *
-from .dataflow_etl import *
+try:
+    from .bigquery_etl import *
+    from .dataflow_etl import *
+except:
+    from bigquery_etl import *
+    from dataflow_etl import *
 
 BUCKET_NAME = "dott_test"
 RAW_DATA_PREFIX = ""

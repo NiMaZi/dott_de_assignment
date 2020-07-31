@@ -1,6 +1,10 @@
 from flask import Flask, request
 from google.cloud import bigquery
-from .bigquery_handling import *
+
+try:
+    from .bigquery_handling import *
+except:
+    from bigquery_handling import *
 
 PROJECT = 'peaceful-tide-284813'
 
