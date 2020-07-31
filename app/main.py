@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_caching import Cache
 from google.cloud import bigquery
 
 try:
@@ -11,6 +12,7 @@ PROJECT = 'peaceful-tide-284813'
 app = Flask(__name__)
 
 @app.route('/vehicles/<key>', methods=['GET'])
+@cache.cached(timeout = 60)
 def func(key):
     
     bq_client = bigquery.Client(project = PROJECT)
