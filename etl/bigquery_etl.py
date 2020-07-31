@@ -107,6 +107,7 @@ def bq_cycle_index(client):
             ST_DISTANCE(ST_GEOGPOINT(start_lat,start_lng),ST_GEOGPOINT(end_lat,end_lng)) as ride_distance
         from `dott_test.rides`) as rides
         on (cycle.vehicle_id = rides.vehicle_id and cycle.time_last_dep_resolved < rides.time_ride_start and cycle.time_last_pick_created > rides.time_ride_end )
+        order by vehicle_id, gross_amount desc
     """
 
     job = client.query(query, job_config = job_config)
