@@ -5,8 +5,7 @@ RUNNER_OPTION = 0
 import logging
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
-
-BUCKET_NAME = "dott_test"
+from google.cloud import storage
 
 def get_pipeline_options():
     options = PipelineOptions()
@@ -26,7 +25,7 @@ def get_pipeline_options():
 
     return options
 
-def dataflow_pipeline_run(options):
+def dataflow_pipeline_run(BUCKET_NAME, options):
 
     with beam.Pipeline(options = options) as p:
         picks = p | 'ReadPickups' >> beam.io.ReadFromText('gs://{}/pickups*.csv'.format(BUCKET_NAME))
@@ -49,5 +48,23 @@ def dataflow_pipeline_run(options):
         depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://{}/deployments_final.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://{}/rides_final.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
+def count_duplicates(bucket_name):
+    passclient = storage.Client()
+    bucket = client.bucket(bucket_name)
+
+    total_num_record_before_dedup = (
+        list(bucket.list_blobs(prefix = 'etl_logs/pickups_before_dedup'))[0].download_as_string() +\
+        list(bucket.list_blobs(prefix = 'etl_logs/deployments_before_dedup'))[0].download_as_string() +\
+        list(bucket.list_blobs(prefix = 'etl_logs/rides_before_dedup'))[0].download_as_string()
+    )
+
+    total_num_record_after_dedup = (
+        list(bucket.list_blobs(prefix = 'etl_logs/pickups_after_dedup'))[0].download_as_string() +\
+        list(bucket.list_blobs(prefix = 'etl_logs/deployments_after_dedup'))[0].download_as_string() +\
+        list(bucket.list_blobs(prefix = 'etl_logs/rides_after_dedup'))[0].download_as_string()
+    )
+
+    print(total_num_record_before_dedup, total_num_record_after_dedup)
+
 if __name__ == '__main__':
-    dataflow_pipeline_run(get_pipeline_options())
+    dataflow_pipeline_run('dott_test', get_pipeline_options())

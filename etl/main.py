@@ -2,13 +2,13 @@ from bigquery_etl import *
 from dataflow_etl import *
 from gs_utils import *
 
-BUCKET_NAME = "dott_de_assignment"
-RAW_DATA_PREFIX = "raw_data_landing/"
+BUCKET_NAME = "dott_test"
+RAW_DATA_PREFIX = ""
 
-def etl_core():
+def etl_core(bucket_name):
     dataflow_pipeline_options = get_pipeline_options()
-    dataflow_pipeline_run(dataflow_pipeline_options)
-    start_bigquery_transfer()
+    dataflow_pipeline_run(bucket_name, dataflow_pipeline_options)
+    count_duplicates(bucket_name)
     bigquery_preprocess()
 
 def main():
@@ -16,7 +16,7 @@ def main():
     new_file = check_new_file(BUCKET_NAME, RAW_DATA_PREFIX)
 
     if new_file:
-        etl_core()
+        etl_core(BUCKET_NAME)
         check_log()
     else:
         pass
