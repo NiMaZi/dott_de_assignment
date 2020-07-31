@@ -44,9 +44,9 @@ def dataflow_pipeline_run(BUCKET_NAME, options):
         depls_dedup | 'DeploymentsCountAfterDedup' >> beam.combiners.Count.Globally() | 'DeploymentsNameIt2' >> beam.Map(lambda x: (x, 'DeploymentsAfterDedup')) | 'DeploymentsPrintCount2' >> beam.io.WriteToText('gs://{}/etl_logs/deployments_after_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         rides_dedup | 'RidesCountAfterDedup' >> beam.combiners.Count.Globally() | 'RidesNameIt2' >> beam.Map(lambda x: (x, 'RidesAfterDedup')) | 'RidesPrintCount2' >> beam.io.WriteToText('gs://{}/etl_logs/rides_after_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
-        picks_dedup | 'WritePickups' >> beam.io.WriteToText('gs://{}/pickups_final.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
-        depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://{}/deployments_final.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
-        rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://{}/rides_final.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
+        picks_dedup | 'WritePickups' >> beam.io.WriteToText('gs://{}/final_pickups.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
+        depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://{}/final_deployments.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
+        rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://{}/final_rides.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
 def count_duplicates(bucket_name):
     client = storage.Client()
@@ -64,7 +64,7 @@ def count_duplicates(bucket_name):
         eval(list(bucket.list_blobs(prefix = 'etl_logs/rides_after_dedup'))[0].download_as_string())[0]
     )
 
-    return "{} records loaded, {} duplicated records discarded.".format(total_num_record_after_dedup, total_num_record_before_dedup)
+    return "{} records loaded, {} duplicated records discarded.".format(total_num_record_after_dedup, total_num_record_before_dedup - total_num_record_after_dedup)
 
 if __name__ == '__main__':
     dataflow_pipeline_run('dott_test', get_pipeline_options())
