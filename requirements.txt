@@ -1,6 +1,5 @@
 flask
 google-cloud-storage
 google-cloud-bigquery
-google-cloud-bigquery-datatransfer
 apache-beam[gcp]
 grequests
