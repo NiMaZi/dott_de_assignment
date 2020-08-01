@@ -1,1 +1,1 @@
-grequests
+locust

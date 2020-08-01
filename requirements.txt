@@ -3,4 +3,4 @@ redis
 google-cloud-storage
 google-cloud-bigquery
 apache-beam[gcp]
-grequests
+locust
