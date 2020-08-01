@@ -51,3 +51,17 @@ The WebApp is hosted on App Engine. It is implemented with Flask. It has the fol
 1. Identifying whether the key is a vehicle_id or qr_code by string length (assuming a qr_code always has length 6),
 1. Performing the query accordingly to get the required results,
 1. Returning the query results as simple HTML.
+
+# Functional and pressure tests
+
+This part does the following things:
+1. Performing the unit test for some core functions,
+1. Performing the pressure test on the WebApp according to the requirement of the assignment.
+
+## Unit test
+
+## Pressure test
+
+As required by the assignment, the WebApp needs to serve at least 5000 requests per minute. So a simulated test case is constructed as: There are 1000 users in total. Each user randomly select a QRCODE to query the vehicle information 10 ~ 20 times per minute. That in the end will result in 10000 ~ 20000 requests per minute. The result from a 5-minute-lasting test shows:  
+```Aggregated                                                     63546     0(0.00%)      64      10    4917  |      18  211.55    0.00```
+The result means that the WebApp can serve 211 requests per minute in average and throw no failure. Extended tests can be performed.
