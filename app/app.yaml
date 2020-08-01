@@ -3,4 +3,4 @@ env_variables:
   REDISHOST: '10.166.182.235'
   REDISPORT: '6379'
 vpc_access_connector:
-  name: dott-de-assignment-vpc
+  name: "projects/peaceful-tide-284813/locations/europe-west1/connectors/dott-de-assignment-vpc"
