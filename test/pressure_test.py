@@ -5,18 +5,12 @@ QR_CODE_LIST = ['DE1FJQ', 'WDBVJX', '4N1Z0R', 'HKNE35', 'J2GDR5', 'KTEBMJ', 'B1J
 
 class MyUser(HttpUser):
 
+    wait_time = between(3, 6)
+
     @task
     def get_vehicle(self):
-
-        wait_time = between(3, 6)
-
         req = self.client.get("/vehicles/{}".format(random.choice(QR_CODE_LIST)), verify=False)
-
-        if req.status_code == 200:
-            print("success")
-        else:
-            print("fails")
 
 if __name__ == "__main__":
     import os
-    os.system("locust -f pressure_test.py --host=http://peaceful-tide-284813.ew.r.appspot.com")
+    os.system("locust -f pressure_test.py --host http://peaceful-tide-284813.ew.r.appspot.com --headless -u 5000 -r 100 -t 5m --csv pressure_test_") 
