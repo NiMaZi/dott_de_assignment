@@ -2,5 +2,5 @@ runtime: python37
 env_variables:
   REDISHOST: '10.166.182.235'
   REDISPORT: '6379'
-network:
-  name: default
+vpc_access_connector:
+  name: dott-de-assignment-vpc
