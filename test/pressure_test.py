@@ -13,4 +13,4 @@ class MyUser(HttpUser):
 
 if __name__ == "__main__":
     import os
-    os.system("locust -f pressure_test.py --host http://peaceful-tide-284813.ew.r.appspot.com --headless -u 5000 -r 100 -t 5m --csv pressure_test_") 
+    os.system("locust -f pressure_test.py --host http://peaceful-tide-284813.ew.r.appspot.com --headless -u 1000 -r 50 -t 5m --csv pressure_test") 
