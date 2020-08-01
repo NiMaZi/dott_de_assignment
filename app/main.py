@@ -1,5 +1,6 @@
+import os
+import redis
 from flask import Flask, request
-from flask_caching import Cache
 from google.cloud import bigquery
 
 try:
@@ -9,20 +10,23 @@ except:
 
 PROJECT = 'peaceful-tide-284813'
 
-config = {
-    "CACHE_TYPE": "simple",
-    "CACHE_DEFAULT_TIMEOUT": 60
-}
 app = Flask(__name__)
-app.config.from_mapping(config)
-cache = Cache(app)
 
-@app.route('/vehicles/<key>', methods=['GET'])
-@cache.cached(timeout = 60)
+redis_host = os.environ.get('REDISHOST')
+redis_port = int(os.environ.get('REDISPORT'))
+redis_client = redis.StrictRedis(host = redis_host, port = redis_port)
+bq_client = bigquery.Client(project = PROJECT)
+
+@app.route('/vehicles/<key>', methods = ['GET'])
 def func(key):
     
-    bq_client = bigquery.Client(project = PROJECT)
-    return get_results(key, bq_client)
+    res = redis_client.get(key)
+    
+    if res is None:
+        res = get_results(key, bq_client)
+        redis_client.set(key, res, ex = 3600) # 1 hour expiration
+
+    return res
     
 
 if __name__ == '__main__':

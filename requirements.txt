@@ -1,5 +1,5 @@
 Flask
-Flask-Caching
+redis
 google-cloud-storage
 google-cloud-bigquery
 apache-beam[gcp]
