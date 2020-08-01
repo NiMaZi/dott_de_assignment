@@ -12,9 +12,10 @@ PROJECT = 'peaceful-tide-284813'
 
 app = Flask(__name__)
 
-# redis_host = os.environ.get('REDISHOST')
-# redis_port = int(os.environ.get('REDISPORT'))
-redis_client = redis.StrictRedis(host = "10.166.182.235", port = 6379)
+redis_host = os.environ.get('REDISHOST')
+redis_port = int(os.environ.get('REDISPORT'))
+redis_client = redis.StrictRedis(host = redis_host, port = redis_port)
+# redis_client = redis.StrictRedis(host = "10.166.182.235", port = 6379)
 bq_client = bigquery.Client(project = PROJECT)
 
 @app.route('/vehicles/<key>', methods = ['GET'])

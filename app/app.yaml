@@ -1,1 +1,6 @@
 runtime: python37
+env_variables:
+  REDISHOST: '10.166.182.235'
+  REDISPORT: '6379'
+network:
+  name: default
