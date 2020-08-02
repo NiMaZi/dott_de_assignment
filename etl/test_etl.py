@@ -4,6 +4,7 @@ from .main import dataflow_etl_core
 class TestQuery(unittest.TestCase):
 
     def test_dup_case(self):
+        # bucket "dott_de_assignment_with_dups" contains manually created duplicatied files.
         self.assertEqual(dataflow_etl_core("dott_de_assignment_with_dups"), "115103 records loaded, 151283 duplicated records discarded.")
     
     def test_nodup_case(self):

@@ -4,7 +4,10 @@ project = 'dott-de-assignment'
 dataset = 'dott_de_assignment_dataset'
 
 def bq_keymap(client):
-    
+    # This function uses the qr_code field in the pickups table to map the vehicle_id field in the deployments table.
+    # Because according to the requirements, the App needs to find the recent deployments of a vehicle based on its qrcode.
+    # However, the qr_code field only exists in the pickups table.
+
     table = 'keymapped_deployments'
 
     job_config = bigquery.QueryJobConfig(destination = "{}.{}.{}".format(project, dataset, table))
@@ -31,11 +34,19 @@ def bq_keymap(client):
     _ = job.result()
 
 def bq_cycle_index(client):
+    # This function finds the last deployment-pickup cycle for each vehicle. 
+    # And then selects for each vehicle only the rides records within its last deployment-pickup cycle.
 
     table = 'last_dep_pick_cycle_indexed_rides'
 
     job_config = bigquery.QueryJobConfig(destination = "{}.{}.{}".format(project, dataset, table))
     job_config.write_disposition = bigquery.WriteDisposition.WRITE_TRUNCATE
+
+    # The SQL query first finds the last pickup for each vehicle as table "last_pick".
+    # Then it selects the deployments for each vehicle that happened before the last pickup, and selects the last ones out of them as table "last_dep".
+    # Then it joins table "last_pick" and "last_dep" by vehicle_id as table "cycle", which should contain the last deployment-pickup cycle for each vehicle.
+    # Then it calculate the distance between the starting and ending points for each ride, and saves this as table "rides".
+    # Finally, it joins table "cycle" and "rides" by vehicle_id and the time range to form the end result.
 
     query = """
         select

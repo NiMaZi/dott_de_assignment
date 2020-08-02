@@ -95,7 +95,6 @@ The test is performed using locust package: ```locust -f pressure_test.py --host
 
 The job graph of the Dataflow ETL pipeline is in:  
 https://storage.googleapis.com/dott_de_assignment_shares/job_graph.PNG  
-This is an example of loading rides. The other 2 are identical in terms of pipeline structure.  
   
 The WebApp can be accessed via http://dott-de-assignment.ew.r.appspot.com/vehicles/{qr_code} or http://dott-de-assignment.ew.r.appspot.com/vehicles/{vehicle_id}.  
   

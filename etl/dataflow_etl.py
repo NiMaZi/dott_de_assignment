@@ -8,6 +8,8 @@ from google.cloud import storage
 
 def gen_parse_kv(mode = 'depl'):
 
+    # This function parses a line in the csv file into a key-value pair.
+
     temp_rschemas = {
         'depl': ['vid', 't_create', 't_resolve'],
         'pick': ['vid', 'qrcode', 't_create', 't_resolve'],
@@ -21,6 +23,9 @@ def gen_parse_kv(mode = 'depl'):
     return parse_kv
 
 def gen_get_last(mode = 'depl', sortkey = 't_resolve'):
+
+    # This function takes a GroupByKey result and select the max based on sortkey (in this case the latest time_task_resolved or time_ride_end), 
+    # and returns in the original comma-separated line format.
 
     temp_rschemas = {
         'depl': ['vid', 't_create', 't_resolve'],
@@ -55,27 +60,34 @@ def get_pipeline_options():
 def dataflow_pipeline_run(BUCKET_NAME, options):
 
     with beam.Pipeline(options = options) as p:
+
+        # Read in raw data files
         picks = p | 'ReadPickups' >> beam.io.ReadFromText('gs://{}/pickups*.csv'.format(BUCKET_NAME))
         depls = p | 'ReadDeployments' >> beam.io.ReadFromText('gs://{}/deployments*.csv'.format(BUCKET_NAME))
         rides = p | 'ReadRides' >> beam.io.ReadFromText('gs://{}/rides*.csv'.format(BUCKET_NAME))
 
+        # Count total number of records
         picks | 'PickupsCountBeforeDedup' >> beam.combiners.Count.Globally() | 'PickupsNameIt1' >> beam.Map(lambda x: (x, 'PickupsBeforeDedup')) | 'PickupsPrintCount1' >> beam.io.WriteToText('gs://{}/etl_logs/pickups_before_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         depls | 'DeploymentsCountBeforeDedup' >> beam.combiners.Count.Globally() | 'DeploymentsNameIt1' >> beam.Map(lambda x: (x, 'DeploymentsBeforeDedup')) | 'DeploymentsPrintCount1' >> beam.io.WriteToText('gs://{}/etl_logs/deployments_before_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         rides | 'RidesCountBeforeDedup' >> beam.combiners.Count.Globally() | 'RidesNameIt1' >> beam.Map(lambda x: (x, 'RidesBeforeDedup')) | 'RidesPrintCount1' >> beam.io.WriteToText('gs://{}/etl_logs/rides_before_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
+        # Deduplication
         picks_dedup = picks | 'ParseKeyPickups' >> beam.Map(gen_parse_kv("pick")) | "GroupByKeyPickups" >> beam.GroupByKey() | "DeDupPickups" >> beam.Map(gen_get_last("pick", "t_resolve"))
         depls_dedup = depls | 'ParseKeyDeployments' >> beam.Map(gen_parse_kv("depl")) | "GroupByKeyDeployments" >> beam.GroupByKey() | "DeDupDeployments" >> beam.Map(gen_get_last("depl", "t_resolve"))
         rides_dedup = rides | 'ParseKeyRides' >> beam.Map(gen_parse_kv("ride")) | "GroupByKeyRides" >> beam.GroupByKey() | "DeDupRides" >> beam.Map(gen_get_last("ride", "t_resolve"))
 
+        # Count total number of records again
         picks_dedup | 'PickupsCountAfterDedup' >> beam.combiners.Count.Globally() | 'PickupsNameIt2' >> beam.Map(lambda x: (x, 'PickupsAfterDedup')) | 'PickupsPrintCount2' >> beam.io.WriteToText('gs://{}/etl_logs/pickups_after_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         depls_dedup | 'DeploymentsCountAfterDedup' >> beam.combiners.Count.Globally() | 'DeploymentsNameIt2' >> beam.Map(lambda x: (x, 'DeploymentsAfterDedup')) | 'DeploymentsPrintCount2' >> beam.io.WriteToText('gs://{}/etl_logs/deployments_after_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         rides_dedup | 'RidesCountAfterDedup' >> beam.combiners.Count.Globally() | 'RidesNameIt2' >> beam.Map(lambda x: (x, 'RidesAfterDedup')) | 'RidesPrintCount2' >> beam.io.WriteToText('gs://{}/etl_logs/rides_after_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
+        # Write to final data files
         picks_dedup | 'WritePickups' >> beam.io.WriteToText('gs://{}/final_pickups.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         depls_dedup | 'WriteDeployments' >> beam.io.WriteToText('gs://{}/final_deployments.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         rides_dedup | 'WriteRides' >> beam.io.WriteToText('gs://{}/final_rides.csv'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
 def count_duplicates(bucket_name):
+    # This function runs after the Dataflow ETL pipeline, to check if there are duplicates.
     client = storage.Client()
     bucket = client.bucket(bucket_name)
 
