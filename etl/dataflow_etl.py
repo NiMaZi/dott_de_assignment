@@ -6,6 +6,29 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
 from google.cloud import storage
 
+temp_rschemas = {
+    'depl': ['vid', 't_create', 't_resolve'],
+    'pick': ['vid', 'qrcode', 't_create', 't_resolve'],
+    'ride': ['vid', 't_create', 't_resolve', 's_lat', 's_lng', 'e_lat', 'e_lng', 'gm'],
+}
+
+def gen_parse_kv(mode = 'depl'):
+
+    def parse_kv(line):
+        vs = line.split(',')
+        return (vs[0], dict(zip(temp_rschemas[mode], vs[1:])))
+    
+    return parse_kv
+
+def gen_get_last(mode = 'depl', sortkey = 't_resolve'):
+
+    def get_last(kv):
+        k, v = kv
+        last = max(v, key = lambda e: e[sortkey])
+        return ','.join([k] + [last[n] for n in last])
+
+    return get_last
+
 def get_pipeline_options():
     options = PipelineOptions()
 
@@ -34,9 +57,9 @@ def dataflow_pipeline_run(BUCKET_NAME, options):
         depls | 'DeploymentsCountBeforeDedup' >> beam.combiners.Count.Globally() | 'DeploymentsNameIt1' >> beam.Map(lambda x: (x, 'DeploymentsBeforeDedup')) | 'DeploymentsPrintCount1' >> beam.io.WriteToText('gs://{}/etl_logs/deployments_before_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         rides | 'RidesCountBeforeDedup' >> beam.combiners.Count.Globally() | 'RidesNameIt1' >> beam.Map(lambda x: (x, 'RidesBeforeDedup')) | 'RidesPrintCount1' >> beam.io.WriteToText('gs://{}/etl_logs/rides_before_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
 
-        picks_dedup = picks | 'DeDupPickups' >> beam.Distinct()
-        depls_dedup = depls | 'DeDupDeployments' >> beam.Distinct()
-        rides_dedup = rides | 'DeDupRides' >> beam.Distinct()
+        picks_dedup = picks | 'ParseKeyPickups' >> beam.Map(gen_parse_kv("pick")) | "GroupByKeyPickups" >> beam.GroupByKey() | "DeDupPickups" >> beam.Map(gen_get_last("pick", "t_resolve"))
+        depls_dedup = depls | 'ParseKeyDeployments' >> beam.Map(gen_parse_kv("depl")) | "GroupByKeyDeployments" >> beam.GroupByKey() | "DeDupDeployments" >> beam.Map(gen_get_last("depl", "t_resolve"))
+        rides_dedup = rides | 'ParseKeyRides' >> beam.Map(gen_parse_kv("ride")) | "GroupByKeyRides" >> beam.GroupByKey() | "DeDupRides" >> beam.Map(gen_get_last("ride", "t_resolve"))
 
         picks_dedup | 'PickupsCountAfterDedup' >> beam.combiners.Count.Globally() | 'PickupsNameIt2' >> beam.Map(lambda x: (x, 'PickupsAfterDedup')) | 'PickupsPrintCount2' >> beam.io.WriteToText('gs://{}/etl_logs/pickups_after_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
         depls_dedup | 'DeploymentsCountAfterDedup' >> beam.combiners.Count.Globally() | 'DeploymentsNameIt2' >> beam.Map(lambda x: (x, 'DeploymentsAfterDedup')) | 'DeploymentsPrintCount2' >> beam.io.WriteToText('gs://{}/etl_logs/deployments_after_dedup.txt'.format(BUCKET_NAME), num_shards = 1, shard_name_template = "")
