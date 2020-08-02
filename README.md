@@ -78,7 +78,7 @@ The following functions are tested:
 The tests are performed using Python built-in unittest package.
 
 For testing ```app.bigquery_handling.get_results```, 4 cases are constructed. They are: using Vehicle ID, using QRCODE, using an unrecognizable key and using a non-string value as key.  
-For testing ```etl.main.main```, 2 cases are constructed. They are: duplicated csv files and no duplicated csv files.  
+For testing ```etl.main.dataflow_etl_core```, 2 cases are constructed. They are: duplicated csv files and no duplicated csv files.  
 
 To execute the tests, please use ```python3 -m unittest discover``` at the root of the repository.
 
