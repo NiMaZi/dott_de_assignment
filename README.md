@@ -21,7 +21,7 @@ The pipeline starts with scanning all raw data files with certain prefixes. For 
 After deduplication, the pipeline writes the final records back to a bucket. By default the same bucket as the input files will be used, and the final files will have the "final_" prefix.  
 A Cloud VM holds the code and automatically submit the abovementioned pipeline as Dataflow jobs on daily basis. The scheduling is managed by crontab.  
   
-Comments:
+### Comments
 1. At the beginning, I wanted to implement a "new file checking" logic, so the pipeline will not run if there is not any new file in the input bucket. Then I thought since the application has to serve 5000 requests per minute, the data refresh rate must be high (I would assume more than once a day) in the real situation. So this idea was discarded. We can add this back if the data won't be updated so often.
 1. I chose Dataflow because I guess the real situation will be streaming data. If that's the case, I can easily use the PubSub programming model to connect Dataflow and BigQuery.
 1. I don't expect that there are really two records with the same key but different values on other fields. If it happened, there must be something wrong in the data collection part. I guess it is kind of "out of scope" for this assignment, so I decided to do nothing about it.
@@ -39,18 +39,30 @@ The results of these transformations are pre-computed in the ETL and preprocessi
 BigQuery Data Transfer is used to load the data files (result of ETL) into the 3 initial tables on daily basis.  
 The same cloud VM as the ETL phase holds the code and automatically run the BigQuery API functions. The scheduling is also managed by crontab.
 
-Comments:
+### Comments
 1. To find the last deployment-pickup cycles, I considered these 2 scenarios: "...-dep-pick" and "...-dep-pick-dep". I assume if a vehicle is still on the street and there is no plan to pick it up yet, the latter will happen. However, I found that there are actually "...-dep-pick-pick" cases in the data. For simplicity, I always take the very last "pick". That is to say, if we see "...-dep-pick1-pick2", it will be treated as "...-dep-pick2".
 1. I don't have much experience of web programming, so 5000 requests per minute sounds really like a lot to me. That's why I decided to pre-compute as much as I can.
-1. I chose BigQuery mostly because it is in the job description and I want to get familiar with it. I think if there is actually large volume data stream, then BigQuery can be efficient. For the data size of this assignment (3 csv files, ~110K row in total), in-memory processing (e.g., Pandas) or simply Cloud SQL is probably faster.
+1. I chose BigQuery mostly because it is in the job description and I want to get familiar with it. I think if there actually is a large volume data stream, then BigQuery can be efficient. For the data size of this assignment (3 csv files, ~110K row in total), in-memory processing (e.g., Pandas) is probably faster.
 
 # WebApp
 
 The WebApp is hosted on App Engine. It is implemented with Flask. It has the following logic:
 1. Getting a *key* from the GET request URL,
-1. Identifying whether the key is a vehicle_id or qr_code by string length (assuming a qr_code always has length 6),
+1. Returning the cached results if the corresponding value of the *key* is cached,
+1. If not cached, identifying whether the key is a vehicle_id or qr_code by string length (assuming a qr_code always has length 6),
 1. Performing the query accordingly to get the required results,
+1. Caching the query results,
 1. Returning the query results as simple HTML.
+
+The WebApp backend has the following architecture:
+1. BigQuery as primary DB,
+1. Redis as caching DB,
+1. Flask as app framework,
+1. Gunicorn as HTTP server.
+
+### Comments
+1. BigQuery has a concurrent query limit on its API, which is 300 per user. This limit makes it hard to reach the "5000 response per minute" requirement if the requests are cluttered. This is the reason I introduced an extra caching DB.
+2. With the pre-computed final tables, the queries in this part are fast. The execution time (measured at BigQuery side) is averagely 15 - 20 ms.
 
 # Functional and pressure tests
 
@@ -64,4 +76,4 @@ This part does the following things:
 
 As required by the assignment, the WebApp needs to serve at least 5000 requests per minute. So a simulated test case is constructed as: There are 1000 users in total. Each user randomly select a QRCODE to query the vehicle information 10 ~ 20 times per minute. That in the end will result in 10000 ~ 20000 requests per minute. The result from a 5-minute-lasting test shows:  
 ```Aggregated                                                     63546     0(0.00%)      64      10    4917  |      18  211.55    0.00```
-The result means that the WebApp can serve 211 requests per minute in average and throw no failure. Extended tests can be performed.
+The result means that the WebApp can serve 211 requests per minute in average and throw no failure. Extended tests can be performed, for example if users are using both QRCODEs and Vehicle IDs. The worst case scenario should happen when the ratio between QRCODE and Vehicle ID is 1 : 1.
