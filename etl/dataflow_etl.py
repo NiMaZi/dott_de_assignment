@@ -1,6 +1,6 @@
 # import sys
 # RUNNER_OPTION = sys.argv[1]
-RUNNER_OPTION = "0"
+RUNNER_OPTION = "1"
 
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
