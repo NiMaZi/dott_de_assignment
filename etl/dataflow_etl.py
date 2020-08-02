@@ -1,6 +1,6 @@
 # import sys
 # RUNNER_OPTION = sys.argv[1]
-RUNNER_OPTION = "0"
+RUNNER_OPTION = "1"
 
 import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
@@ -14,10 +14,10 @@ def get_pipeline_options():
     elif RUNNER_OPTION == "1":
         gcp_options = options.view_as(GoogleCloudOptions)
         gcp_options.job_name = "dott-de-assignment"
-        gcp_options.project = "peaceful-tide-284813"
-        gcp_options.region = "europe-west1"
-        gcp_options.temp_location = "gs://dott_test/dataflow_temps"
-        gcp_options.service_account_email = "dott-test-local@peaceful-tide-284813.iam.gserviceaccount.com"
+        gcp_options.project = "dott-de-assignment"
+        gcp_options.region = "us-central1"
+        gcp_options.temp_location = "gs://dott_de_assignment_bucket/dataflow_temps/"
+        # gcp_options.service_account_email = "dott-test-local@peaceful-tide-284813.iam.gserviceaccount.com"
         options.view_as(StandardOptions).runner = 'DataflowRunner'
     else:
         raise Exception("invalid arg")
@@ -66,4 +66,4 @@ def count_duplicates(bucket_name):
     return "{} records loaded, {} duplicated records discarded.".format(total_num_record_after_dedup, total_num_record_before_dedup - total_num_record_after_dedup)
 
 if __name__ == '__main__':
-    dataflow_pipeline_run('dott_test', get_pipeline_options())
+    dataflow_pipeline_run('dott_de_assignment_bucket', get_pipeline_options())
