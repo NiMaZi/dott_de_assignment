@@ -17,14 +17,13 @@ This part of the application does the following things:
 ETL and preprocessing steps 1, 2 and 3 are included in this section.  
 Corresponding code is in ```/etl/dataflow_etl.py```.  
 
-The pipeline starts with scanning all raw data files with certain prefixes. For example, it use pattern ```*some_folder*/pickups*.csv``` to find all files about pickups. Then it use Beam built-in ```Distinct()``` function to deduplicate the records. In this case, only identical records are going to be considered. If there are two records with the same key (e.g., task_id or vehicle_id) but different values on other fields, they will both be considered as valid records.  
+The pipeline starts with scanning all raw data files with certain prefixes. For example, it use pattern ```*some_folder*/pickups*.csv``` to find all files about pickups. Then it group the records by the primary keys. To deduplicate the records, it only returns the last record in terms of timestamp for each primary key. For deployments and pickups, the field ```time_task_resolved``` is used for deduplication and for rides ```time_ride_end``` is used.
 After deduplication, the pipeline writes the final records back to a bucket. By default the same bucket as the input files will be used, and the final files will have the "final_" prefix.  
 A Cloud VM holds the code and automatically submit the abovementioned pipeline as Dataflow jobs on daily basis. The scheduling is managed by crontab.  
   
 ### Comments
 1. At the beginning, I wanted to implement a "new file checking" logic, so the pipeline will not run if there is not any new file in the input bucket. Then I thought since the application has to serve 5000 requests per minute, the data refresh rate must be high (I would assume more than once a day) in the real situation. So this idea was discarded. We can add this back if the data won't be updated so often.
 1. I chose Dataflow because I guess the real situation will be streaming data. If that's the case, I can easily use the PubSub programming model to connect Dataflow and BigQuery.
-1. I don't expect that there are really two records with the same key but different values on other fields. If it happened, there must be something wrong in the data collection part. I guess it is kind of "out of scope" for this assignment, so I decided to do nothing about it.
 
 ## BigQuery preprocessing
 ETL and preprocessing steps 4 and 5 are included in this section.  

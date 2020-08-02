@@ -1,3 +1,4 @@
+import os
 import sys
 run_spec = int(sys.argv[1])
 
@@ -11,8 +12,7 @@ except:
 BUCKET_NAME = "dott_de_assignment_bucket"
 
 def dataflow_etl_core(bucket_name):
-    dataflow_pipeline_options = get_pipeline_options()
-    dataflow_pipeline_run(bucket_name, dataflow_pipeline_options)
+    os.system("python3 dataflow_etl.py") 
     dataflow_report = count_duplicates(bucket_name)
     return dataflow_report
 
