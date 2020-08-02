@@ -97,5 +97,5 @@ The test is performed using locust package: ```locust -f pressure_test.py --host
 The WebApp can be accessed via http://dott-de-assignment.ew.r.appspot.com/vehicles/{qr_code} or http://dott-de-assignment.ew.r.appspot.com/vehicles/{vehicle_id}.
 
 The pressure test results are saved in the following files:
-1. pass
-2. pass
+1. https://storage.googleapis.com/dott_de_assignment_shares/pressure_test_stats.csv
+2. https://storage.googleapis.com/dott_de_assignment_shares/pressure_test_stats_history.csv
