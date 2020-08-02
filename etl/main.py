@@ -8,8 +8,7 @@ except:
     from bigquery_etl import *
     from dataflow_etl import *
 
-BUCKET_NAME = "dott_test"
-RAW_DATA_PREFIX = ""
+BUCKET_NAME = "dott_de_assignment_bucket"
 
 def dataflow_etl_core(bucket_name):
     dataflow_pipeline_options = get_pipeline_options()

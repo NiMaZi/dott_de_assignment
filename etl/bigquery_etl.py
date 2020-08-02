@@ -1,7 +1,7 @@
 from google.cloud import bigquery
 
-project = 'peaceful-tide-284813'
-dataset = 'dott_test'
+project = 'dott-de-assignment'
+dataset = 'dott_de_assignment_dataset'
 
 def bq_keymap(client):
     
