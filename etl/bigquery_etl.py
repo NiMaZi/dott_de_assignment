@@ -17,15 +17,15 @@ def bq_keymap(client):
             keymap.qr_code,
             dep.time_task_created,
             dep.time_task_resolved 
-        from `dott_test.deployment` as dep left join
+        from `{}.deployment` as dep left join
         (select
             vehicle_id,
             qr_code
-        from `dott_test.pickups` 
+        from `{}.pickups` 
         group by vehicle_id, qr_code) as keymap
         on (dep.vehicle_id = keymap.vehicle_id)
         order by vehicle_id, time_task_resolved desc
-    """
+    """.format(dataset, dataset)
 
     job = client.query(query, job_config = job_config)
     _ = job.result()
@@ -57,15 +57,15 @@ def bq_cycle_index(client):
         (select
             dep.vehicle_id as vehicle_id,
             max(dep.time_task_resolved) as time_last_task_resolved
-        from `dott_test.deployment` as dep inner join
+        from `{}.deployment` as dep inner join
         (select
             a.task_id,
             a.vehicle_id,
             a.qr_code,
             a.time_task_created,
             a.time_task_resolved
-        from `dott_test.pickups` as a
-        left outer join `dott_test.pickups` as b on (a.vehicle_id = b.vehicle_id and a.time_task_created < b.time_task_created)
+        from `{}.pickups` as a
+        left outer join `{}.pickups` as b on (a.vehicle_id = b.vehicle_id and a.time_task_created < b.time_task_created)
         where b.vehicle_id is null) as last_pick
         on (dep.vehicle_id = last_pick.vehicle_id and dep.time_task_resolved < last_pick.time_task_created )
         group by dep.vehicle_id) as last_dep inner join
@@ -73,8 +73,8 @@ def bq_cycle_index(client):
             a.vehicle_id as vehicle_id,
             a.qr_code as qr_code,
             a.time_task_created as time_last_task_created
-        from `dott_test.pickups` as a
-        left outer join `dott_test.pickups` as b on (a.vehicle_id = b.vehicle_id and a.time_task_created < b.time_task_created)
+        from `{}.pickups` as a
+        left outer join `{}.pickups` as b on (a.vehicle_id = b.vehicle_id and a.time_task_created < b.time_task_created)
         where b.vehicle_id is null) as last_pick
         on last_dep.vehicle_id = last_pick.vehicle_id) as cycle inner join
         (select
@@ -88,10 +88,10 @@ def bq_cycle_index(client):
             end_lng,
             gross_amount,
             ST_DISTANCE(ST_GEOGPOINT(start_lat,start_lng),ST_GEOGPOINT(end_lat,end_lng)) as ride_distance
-        from `dott_test.rides`) as rides
+        from `{}.rides`) as rides
         on (cycle.vehicle_id = rides.vehicle_id and cycle.time_last_dep_resolved < rides.time_ride_start and cycle.time_last_pick_created > rides.time_ride_end )
         order by vehicle_id, gross_amount desc
-    """
+    """.format(dataset, dataset, dataset, dataset, dataset, dataset)
 
     job = client.query(query, job_config = job_config)
     _ = job.result()
