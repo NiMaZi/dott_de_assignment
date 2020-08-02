@@ -1,5 +1,5 @@
 import sys
-run_spec = int(sys.argv[0])
+run_spec = int(sys.argv[1])
 
 try:
     from .bigquery_etl import *
