@@ -72,8 +72,28 @@ This part does the following things:
 
 ## Unit test
 
+The following functions are tested:
+1. The function that performs user query to get vehicle information (code in ```app/test_app.py```),
+1. The function that loads csv files using Dataflow and logs the deduplication information (code in ```etl/test_etl.py```).
+The tests are performed using Python built-in unittest package.
+
+For testing ```app.bigquery_handling.get_results```, 4 cases are constructed. They are: using Vehicle ID, using QRCODE, using an unrecognizable key and using a non-string value as key.  
+For testing ```etl.main.main```, 2 cases are constructed. They are: duplicated csv files and no duplicated csv files.  
+
+To execute the tests, please use ```python3 -m unittest discover``` at the root of the repository.
+
+### Comments
+1. I couldn't come up with any meaningful test case for my functions. So here I am with those stupid ones. However, I still spotted and fixed several bugs with these cases.
+
 ## Pressure test
 
 As required by the assignment, the WebApp needs to serve at least 5000 requests per minute. So a simulated test case is constructed as: There are 1000 users in total. Each user randomly select a QRCODE to query the vehicle information 10 ~ 20 times per minute. That in the end will result in 10000 ~ 20000 requests per minute. The result from a 5-minute-lasting test shows:  
-```Aggregated                                                     63546     0(0.00%)      64      10    4917  |      18  211.55    0.00```
-The result means that the WebApp can serve 211 requests per minute in average and throw no failure. Extended tests can be performed, for example if users are using both QRCODEs and Vehicle IDs. The worst case scenario should happen when the ratio between QRCODE and Vehicle ID is 1 : 1.
+```Aggregated                                                     63546     0(0.00%)      64      10    4917  |      18  211.55    0.00```  
+The result means that the WebApp can serve 211 requests per minute in average and throw no failure. Extended tests can be performed, for example if users are using both QRCODEs and Vehicle IDs. The worst case scenario should happen when the ratio between QRCODE and Vehicle ID is 1 : 1.   
+The test is performed using locust package: ```locust -f pressure_test.py --host http://peaceful-tide-284813.ew.r.appspot.com --headless -u 1000 -r 50 -t 5m --csv pressure_test```
+
+# References
+
+The pressure test results are saved in the following files:
+1. pass
+2. pass
