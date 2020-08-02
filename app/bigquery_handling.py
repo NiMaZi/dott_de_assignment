@@ -1,6 +1,6 @@
 from google.cloud import bigquery
 
-DATASET = "dott_test"
+DATASET = "dott_de_assignment_dataset"
 TABLE_MAPPED_DEPS = "keymapped_deployments"
 TABLE_INDEXED_RIDES = "last_dep_pick_cycle_indexed_rides"
 

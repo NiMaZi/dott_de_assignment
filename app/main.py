@@ -8,7 +8,7 @@ try:
 except:
     from bigquery_handling import *
 
-PROJECT = 'peaceful-tide-284813'
+PROJECT = 'dott-de-assignment'
 
 app = Flask(__name__)
 

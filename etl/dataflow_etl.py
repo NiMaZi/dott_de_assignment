@@ -17,7 +17,6 @@ def get_pipeline_options():
         gcp_options.project = "dott-de-assignment"
         gcp_options.region = "us-central1"
         gcp_options.temp_location = "gs://dott_de_assignment_bucket/dataflow_temps/"
-        # gcp_options.service_account_email = "dott-test-local@peaceful-tide-284813.iam.gserviceaccount.com"
         options.view_as(StandardOptions).runner = 'DataflowRunner'
     else:
         raise Exception("invalid arg")

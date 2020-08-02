@@ -2,7 +2,7 @@ import unittest
 from google.cloud import bigquery
 from .bigquery_handling import get_results
 
-PROJECT = 'peaceful-tide-284813'
+PROJECT = 'dott-de-assignment'
 
 class TestQuery(unittest.TestCase):
 

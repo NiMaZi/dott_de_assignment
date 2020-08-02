@@ -1,6 +1,6 @@
 runtime: python37
 env_variables:
-  REDISHOST: '10.166.182.235'
+  REDISHOST: '10.44.122.227'
   REDISPORT: '6379'
-vpc_access_connector:
-  name: "projects/peaceful-tide-284813/locations/europe-west1/connectors/dott-de-assignment-vpc"
+network:
+  name: default
