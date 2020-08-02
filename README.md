@@ -90,9 +90,11 @@ To execute the tests, please use ```python3 -m unittest discover``` at the root 
 As required by the assignment, the WebApp needs to serve at least 5000 requests per minute. So a simulated test case is constructed as: There are 1000 users in total. Each user randomly select a QRCODE to query the vehicle information 10 ~ 20 times per minute. That in the end will result in 10000 ~ 20000 requests per minute. The result from a 5-minute-lasting test shows:  
 ```Aggregated                                                     63546     0(0.00%)      64      10    4917  |      18  211.55    0.00```  
 The result means that the WebApp can serve 211 requests per minute in average and throw no failure. Extended tests can be performed, for example if users are using both QRCODEs and Vehicle IDs. The worst case scenario should happen when the ratio between QRCODE and Vehicle ID is 1 : 1.   
-The test is performed using locust package: ```locust -f pressure_test.py --host http://peaceful-tide-284813.ew.r.appspot.com --headless -u 1000 -r 50 -t 5m --csv pressure_test```
+The test is performed using locust package: ```locust -f pressure_test.py --host http://dott-de-assignment.ew.r.appspot.com --headless -u 1000 -r 50 -t 5m --csv pressure_test```
 
-# References
+# Other information
+
+The WebApp can be accessed via http://dott-de-assignment.ew.r.appspot.com/vehicles/{qr_code} or http://dott-de-assignment.ew.r.appspot.com/vehicles/{vehicle_id}.
 
 The pressure test results are saved in the following files:
 1. pass
