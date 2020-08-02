@@ -6,13 +6,13 @@ import apache_beam as beam
 from apache_beam.options.pipeline_options import PipelineOptions, StandardOptions, GoogleCloudOptions
 from google.cloud import storage
 
-temp_rschemas = {
-    'depl': ['vid', 't_create', 't_resolve'],
-    'pick': ['vid', 'qrcode', 't_create', 't_resolve'],
-    'ride': ['vid', 't_create', 't_resolve', 's_lat', 's_lng', 'e_lat', 'e_lng', 'gm'],
-}
-
 def gen_parse_kv(mode = 'depl'):
+
+    temp_rschemas = {
+        'depl': ['vid', 't_create', 't_resolve'],
+        'pick': ['vid', 'qrcode', 't_create', 't_resolve'],
+        'ride': ['vid', 't_create', 't_resolve', 's_lat', 's_lng', 'e_lat', 'e_lng', 'gm'],
+    }
 
     def parse_kv(line):
         vs = line.split(',')
@@ -21,6 +21,12 @@ def gen_parse_kv(mode = 'depl'):
     return parse_kv
 
 def gen_get_last(mode = 'depl', sortkey = 't_resolve'):
+
+    temp_rschemas = {
+        'depl': ['vid', 't_create', 't_resolve'],
+        'pick': ['vid', 'qrcode', 't_create', 't_resolve'],
+        'ride': ['vid', 't_create', 't_resolve', 's_lat', 's_lng', 'e_lat', 'e_lng', 'gm'],
+    }
 
     def get_last(kv):
         k, v = kv

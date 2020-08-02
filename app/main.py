@@ -8,6 +8,8 @@ try:
 except:
     from bigquery_handling import *
 
+# The following part initialize the Flask App and establish the connection to Redis.
+
 PROJECT = 'dott-de-assignment'
 
 app = Flask(__name__)
@@ -20,11 +22,11 @@ bq_client = bigquery.Client(project = PROJECT)
 @app.route('/vehicles/<key>', methods = ['GET'])
 def func(key):
     
-    res = redis_client.get(key)
+    res = redis_client.get(key) # Check if the query results are already cached.
     
     if res is None:
-        res = get_results(key, bq_client)
-        redis_client.set(key, res, ex = 3600) # 1 hour expiration
+        res = get_results(key, bq_client) # Run the BigQuery queries.
+        redis_client.set(key, res, ex = 3600) # Cache the results with 1 hour expiration.
 
     return res
     
